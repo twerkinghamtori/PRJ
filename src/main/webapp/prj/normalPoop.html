@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>똥 시러~</title>
+<link rel="stylesheet" href="poop.css">
+<script>
+   let canvasWidth = 400;
+   let canvasHeight = 400;
+   let scnt=0;
+   let imgs = [];
+   let character;
+   
+   const start = function(){
+	 cm = setInterval(create, 500);
+  	 mm = setInterval(moveMode, 50);
+   	 character = new charMoving(); 
+   	 window.addEventListener("keydown", cmove, false);
+   	 function cmove(event) {
+	   if(event.keyCode==37) {
+		   character.leftmove();
+	   }else if(event.keyCode==39) {
+		   character.rightmove();
+	    }
+	   }
+	}
+   const restart = function(){
+	   window.location.onload();
+	   start();
+	   
+   }
+   window.onload = function() {
+	   document.querySelector("#start").onclick = function(event) {
+		  start();
+		  document.querySelector("#start").disabled = true;
+	   }
+   }   
+   function falling() {
+	   this.body = document.createElement("img");
+	   this.body.src = "img/poo.png";
+	   this.x = random(canvasWidth);
+	   this.y = 0;	   
+	   this.vY = 10;
+	   this.body.style.width="50px";
+	   this.body.style.height="50px";
+	   this.body.style.left = this.x + "px";
+	   this.body.style.position = "absolute";
+	   document.querySelector("#main").appendChild(this.body);
+	   this.move = function() {
+		   if ((this.x+this.body.innerHTML.width)>canvasWidth) {
+				 this.x = canvasWidth-(this.body.innerHTML.width+1);
+			 }
+		   	this.y+=this.vY;
+		   	this.body.style.top = this.y + "px";
+            if((Math.abs(character.x-this.x) < 50) && (Math.abs(this.y-character.y)<15)) {	
+				   clearInterval(mm);
+				   clearInterval(cm);				
+			}
+		   	
+	   }
+	   this.remove = function() {
+		   document.querySelector("#main").removeChild(this.body);
+	   }
+   }
+   function charMoving() {
+	   this.body = document.createElement("img");
+	   this.body.src = "img/hero.png";
+	   this.x = 0;
+	   this.vX = 10;
+	   this.y = 320;
+	   this.body.style.width="50px";
+	   this.body.style.height="50px";
+	   this.body.style.position = "absolute";
+	   this.body.style.top = "360px";
+	   document.querySelector("#main").appendChild(this.body);
+	   this.leftmove = function() {
+			   if(this.x<=10) {
+				   this.body.style.left = this.x + "px";
+			   }else {
+				   this.x -= this.vX;
+				   this.body.style.left = this.x + "px";
+			   }
+	   }
+	   this.rightmove = function() {
+		   if(this.x>=410) {
+			   this.body.style.left = this.x + "px";
+		   } else {
+			   this.x += this.vX;
+			   this.body.style.left = this.x + "px";
+		   }			   		   
+	   }
+   }
+   function random(num) {
+		 let num1 = Math.random()* num;
+		 num1 = parseInt(num1);
+		 return num1;
+	}
+   function create() {
+	   imgs.push(new falling());
+   }
+   
+   function moveMode() {
+		 for (let i in imgs) {
+		   imgs[i].move();
+		   if(imgs[i].y>=370) {
+			    document.querySelector("#main").removeChild(imgs[i].body);
+			    delete(imgs[i]);
+			    scnt++;
+			    document.querySelector("#score").innerHTML= "점수 : " + scnt;
+		   }	
+		 } 
+	} 
+</script>
+</head>
+<body>
+	<div id="main"></div>
+	<div id="score"></div>
+	<div>
+		<input type="button" value="게임시작" id="start"> 
+		<input type="button" value="reset" id="restart" onclick="window.location.reload()"> 
+	</div>
+</body>
+</html>
